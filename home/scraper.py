@@ -2,6 +2,7 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import re
+import pandas as pd
 
 #For String to Integer conversion
 def str2int(s):
@@ -31,4 +32,40 @@ def WorldScraper():
     active=str2int(active)
     print(total,deaths,recover,active)
 
-WorldScraper()
+#For the Countries
+def CountryScraper():
+    url = 'https://www.worldometers.info/coronavirus/'
+    req = requests.get(url)
+    content = req.content
+    soup = bs(content, 'html.parser')
+    table=soup.table
+    table_rows=table.find_all('tr')
+    rows=[]
+    for tr in table_rows:
+        td=tr.find_all('td')
+        row=[i.text for i in td]
+        if(len(row)>1):
+            if(row[0]!='' and str2int(row[0])<=215):
+                rows.append(row)
+    for i in rows:
+        print(i)
+
+
+#For the States
+def StateScraper():
+    url='https://www.mohfw.gov.in/'
+    req=requests.get(url)
+    content=req.content
+    soup=bs(content,'html.parser')
+    table=soup.table
+    table_rows=table.find_all('tr')
+    rows=[]
+    for tr in  table_rows:
+        td=tr.find_all('td')
+        row=[i.text for i in td]
+        if (len(row) > 1):
+            if (row[0] != '' and row[0].isdigit() and str2int(row[0]) <= 33):
+                rows.append(row)
+    for i in rows:
+        print(i)
+StateScraper()
